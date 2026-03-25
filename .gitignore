@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# macOS
+.DS_Store
+
+# AWS Chalice
+.chalice/deployed/
+.chalice/deployments/
+
+# Archives
+*.zip
+*.7z
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Generated artifacts
+artifacts/
+*.csv
+!requirements.txt
+
+# Course materials (not student deliverables)
+Instructions/
+Midterm/
+Group project/
+Lab_2_Submittable/
+myheadlines_izzet/
+myheadlines_izzet.zip
+s3_test.txt
+
+# Assignment 1 generated outputs
+Assignments/1/izzet_iam_get_user.json
+Assignments/1/izzet_comprehend_output.json
+Assignments/1/izzet_comprehend_medical_output.json
