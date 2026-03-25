@@ -1,0 +1,12 @@
+{
+  "version": "2.0",
+  "app_name": "speaking-pictorial",
+  "stages": {
+    "dev": {
+      "api_gateway_stage": "api",
+      "environment_variables": {
+        "STORAGE_BUCKET": "my-unique-bucket-20250118-xyz"
+      }
+    }
+  }
+}
