@@ -1,0 +1,26 @@
+sequenceDiagram
+    participant User
+    participant FE as Frontend
+    participant API as Chalice API
+    participant S3 as S3
+    participant Rek as Rekognition
+    participant Tr as Translate
+    participant Pol as Polly
+
+    User->>FE: Select image + click run
+    FE->>API: POST /images (base64 file)
+    API->>S3: put_object(image)
+    API-->>FE: imageId + imageUrl
+
+    FE->>API: POST /images/{id}/speak-text
+    API->>Rek: detect_text(image in S3)
+    Rek-->>API: detected lines
+    loop each high-confidence line
+        API->>Tr: translate_text
+        Tr-->>API: translated text
+    end
+    API->>Pol: synthesize_speech(full text)
+    Pol-->>API: MP3 bytes
+    API->>S3: put_object(audio mp3)
+    API-->>FE: translatedText + audioFileUrl
+    FE-->>User: Display text + play audio

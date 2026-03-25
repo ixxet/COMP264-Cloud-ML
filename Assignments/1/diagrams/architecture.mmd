@@ -1,0 +1,9 @@
+flowchart LR
+    U[User Browser] --> FE[Frontend index.html + scripts.js]
+    FE --> API[Chalice REST API app.py]
+    API --> S3[(Amazon S3 Bucket)]
+    API --> RKG[Amazon Rekognition]
+    API --> TRN[Amazon Translate]
+    API --> POL[Amazon Polly]
+    POL --> S3
+    API --> FE

@@ -1,0 +1,5 @@
+Create .chalice/config.json using:
+chalice new-project temp-init
+Then copy temp-init/.chalice into this project if needed.
+
+For local run, only app.py and requirements.txt are required.
