@@ -82,7 +82,7 @@ Important clarification:
 This is the safest first run. It verifies the dataset and writes the CSV files SageMaker expects.
 
 ```bash
-cd "/Users/zizo/Documents/Centennial/School/3402/Sem6/264 - Cloud ML/ML_Work/in class lab 1"
+cd "/Users/zizo/Documents/Centennial/School/3402/Sem6/264 - Cloud ML/ML_Work/Labs/LAB-1"
 python3 sagemaker_adult_income_lab.py
 ```
 
@@ -99,7 +99,7 @@ That creates:
 If you are running this on your local machine with AWS credentials configured:
 
 ```bash
-cd "/Users/zizo/Documents/Centennial/School/3402/Sem6/264 - Cloud ML/ML_Work/in class lab 1"
+cd "/Users/zizo/Documents/Centennial/School/3402/Sem6/264 - Cloud ML/ML_Work/Labs/LAB-1"
 export AWS_REGION="us-east-1"
 export RUN_SAGEMAKER_PIPELINE="true"
 python3 sagemaker_adult_income_lab.py
@@ -138,7 +138,7 @@ pip install -q shap xgboost
 
 The notebook does not require SHAP for training or deployment. SHAP is only used at the end to explain feature influence in a more professional way.
 
-5. Open and run [In_Class_Lab_1_SageMaker_Adult_Income.ipynb](/Users/zizo/Documents/Centennial/School/3402/Sem6/264%20-%20Cloud%20ML/ML_Work/in%20class%20lab%201/In_Class_Lab_1_SageMaker_Adult_Income.ipynb) from top to bottom.
+5. Open and run [In_Class_Lab_1_SageMaker_Adult_Income.ipynb](/Users/zizo/Documents/Centennial/School/3402/Sem6/264%20-%20Cloud%20ML/ML_Work/Labs/LAB-1/In_Class_Lab_1_SageMaker_Adult_Income.ipynb) from top to bottom.
 6. When the notebook prints the default bucket and uploads the CSV files, open the Amazon S3 console, go to that bucket, and navigate to the printed prefix ending in `/data/` to confirm `train.csv` and `validation.csv` exist.
 7. After training finishes, deploy the endpoint, run the evaluation cell, and fill in the final `Submission Summary` markdown cell.
 8. If you want a stronger report, run the optional SHAP section at the end and capture the SHAP feature-importance output.

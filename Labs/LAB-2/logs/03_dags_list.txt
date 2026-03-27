@@ -1,0 +1,6 @@
+example_python_operator                                 | /Users/zizo/Documents/Centennial/School/3402/Sem6/264 - Cloud                                                            | airflow | None     
+                                                        | ML/ML_Work/Lab_2_Submittable/.venv/lib/python3.12/site-packages/airflow/example_dags/example_python_operator.py          |         |          
+my_izzet_dag1                                           | /Users/zizo/Documents/Centennial/School/3402/Sem6/264 - Cloud                                                            | airflow | True     
+                                                        | ML/ML_Work/Lab_2_Submittable/airflow_home/dags/my_izzet_dag1.py                                                          |         |          
+my_izzet_dag2                                           | /Users/zizo/Documents/Centennial/School/3402/Sem6/264 - Cloud                                                            | airflow | True     
+                                                        | ML/ML_Work/Lab_2_Submittable/airflow_home/dags/my_izzet_dag2.py                                                          |         |          

@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+
+# Airflow runtime artifacts
+airflow_home/airflow.db
+airflow_home/airflow.cfg
+airflow_home/webserver_config.py
+airflow_home/airflow-webserver.*
+airflow_home/airflow-scheduler.*
+airflow_home/*.pid
+airflow_home/logs/
+airflow_home/scheduler/
+airflow_home/webserver/
+
+# Generated package
+Lab2_Izzet_Abidi_Submission.zip

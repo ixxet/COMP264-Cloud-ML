@@ -1,0 +1,6 @@
+/Users/zizo/Documents/Centennial/School/3402/Sem6/264 - Cloud ML/ML_Work/Lab_2_Submittable/.venv/lib/python3.12/site-packages/airflow/metrics/base_stats_logger.py:22 RemovedInAirflow3Warning: Timer and timing metrics publish in seconds were deprecated. It is enabled by default from Airflow 3 onwards. Enable timer_unit_consistency to publish all the timer and timing metrics in milliseconds.
+/Users/zizo/Documents/Centennial/School/3402/Sem6/264 - Cloud ML/ML_Work/Lab_2_Submittable/.venv/lib/python3.12/site-packages/airflow/triggers/base.py:27 RemovedInAirflow3Warning: Timer and timing metrics publish in seconds were deprecated. It is enabled by default from Airflow 3 onwards. Enable timer_unit_consistency to publish all the timer and timing metrics in milliseconds.
+id | username | email                   | first_name | last_name | roles
+===+==========+=========================+============+===========+======
+1  | admin    | izzet.abidi@example.com | Izzet      | Abidi     | Admin
+                                                                        

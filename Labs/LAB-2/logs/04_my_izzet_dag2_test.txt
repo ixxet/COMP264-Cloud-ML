@@ -1,0 +1,84 @@
+/Users/zizo/Documents/Centennial/School/3402/Sem6/264 - Cloud ML/ML_Work/Lab_2_Submittable/.venv/lib/python3.12/site-packages/airflow/metrics/base_stats_logger.py:22 RemovedInAirflow3Warning: Timer and timing metrics publish in seconds were deprecated. It is enabled by default from Airflow 3 onwards. Enable timer_unit_consistency to publish all the timer and timing metrics in milliseconds.
+/Users/zizo/Documents/Centennial/School/3402/Sem6/264 - Cloud ML/ML_Work/Lab_2_Submittable/.venv/lib/python3.12/site-packages/airflow/triggers/base.py:27 RemovedInAirflow3Warning: Timer and timing metrics publish in seconds were deprecated. It is enabled by default from Airflow 3 onwards. Enable timer_unit_consistency to publish all the timer and timing metrics in milliseconds.
+/Users/zizo/Documents/Centennial/School/3402/Sem6/264 - Cloud ML/ML_Work/Lab_2_Submittable/.venv/lib/python3.12/site-packages/airflow/cli/commands/dag_command.py:48 UserWarning: Could not import graphviz. Rendering graph to the graphical format will not be possible.
+[2026-03-20T11:14:19.195-0400] {plugins.py:37} INFO - setup plugin alembic.autogenerate.schemas
+[2026-03-20T11:14:19.196-0400] {plugins.py:37} INFO - setup plugin alembic.autogenerate.tables
+[2026-03-20T11:14:19.196-0400] {plugins.py:37} INFO - setup plugin alembic.autogenerate.types
+[2026-03-20T11:14:19.196-0400] {plugins.py:37} INFO - setup plugin alembic.autogenerate.constraints
+[2026-03-20T11:14:19.196-0400] {plugins.py:37} INFO - setup plugin alembic.autogenerate.defaults
+[2026-03-20T11:14:19.196-0400] {plugins.py:37} INFO - setup plugin alembic.autogenerate.comments
+[2026-03-20T11:14:19.273-0400] {dagbag.py:588} INFO - Filling up the DagBag from /Users/zizo/Documents/Centennial/School/3402/Sem6/264 - Cloud ML/ML_Work/Lab_2_Submittable/airflow_home/dags
+[2026-03-20T11:14:19.300-0400] {example_local_kubernetes_executor.py:40} WARNING - Could not import DAGs in example_local_kubernetes_executor.py
+Traceback (most recent call last):
+  File "/Users/zizo/Documents/Centennial/School/3402/Sem6/264 - Cloud ML/ML_Work/Lab_2_Submittable/.venv/lib/python3.12/site-packages/airflow/example_dags/example_local_kubernetes_executor.py", line 38, in <module>
+    from kubernetes.client import models as k8s
+ModuleNotFoundError: No module named 'kubernetes'
+[2026-03-20T11:14:19.300-0400] {example_local_kubernetes_executor.py:41} WARNING - Install Kubernetes dependencies with: pip install apache-airflow[cncf.kubernetes]
+[2026-03-20T11:14:19.307-0400] {example_python_operator.py:93} WARNING - The virtalenv_python example task requires virtualenv, please install it.
+[2026-03-20T11:14:19.308-0400] {tutorial_taskflow_api_virtualenv.py:29} WARNING - The tutorial_taskflow_api_virtualenv example DAG requires virtualenv, please install it.
+[2026-03-20T11:14:19.331-0400] {example_python_decorator.py:80} WARNING - The virtalenv_python example task requires virtualenv, please install it.
+[2026-03-20T11:14:19.367-0400] {workday.py:41} WARNING - Could not import pandas. Holidays will not be considered.
+[2026-03-20T11:14:19.371-0400] {example_kubernetes_executor.py:39} WARNING - The example_kubernetes_executor example DAG requires the kubernetes provider. Please install it with: pip install apache-airflow[cncf.kubernetes]
+[2026-03-20T11:14:19.390-0400] {workday.py:41} WARNING - Could not import pandas. Holidays will not be considered.
+[2026-03-20T11:14:19.403-0400] {dag.py:4435} INFO - dagrun id: my_izzet_dag2
+[2026-03-20T11:14:19.416-0400] {dag.py:4451} INFO - created dagrun <DagRun my_izzet_dag2 @ 2026-03-20 00:00:00+00:00: manual__2026-03-20T00:00:00+00:00, state:running, queued_at: None. externally triggered: False>
+[2026-03-20T11:14:19.425-0400] {dag.py:4396} INFO - [DAG TEST] starting task_id=extract map_index=-1
+[2026-03-20T11:14:19.425-0400] {dag.py:4399} INFO - [DAG TEST] running task <TaskInstance: my_izzet_dag2.extract manual__2026-03-20T00:00:00+00:00 [scheduled]>
+[2026-03-20T11:14:19.476-0400] {workday.py:41} WARNING - Could not import pandas. Holidays will not be considered.
+[2026-03-20 11:14:19,489] {taskinstance.py:3158} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='airflow' AIRFLOW_CTX_DAG_ID='my_izzet_dag2' AIRFLOW_CTX_TASK_ID='extract' AIRFLOW_CTX_EXECUTION_DATE='2026-03-20T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-20T00:00:00+00:00'
+[2026-03-20T11:14:19.489-0400] {taskinstance.py:3158} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='airflow' AIRFLOW_CTX_DAG_ID='my_izzet_dag2' AIRFLOW_CTX_TASK_ID='extract' AIRFLOW_CTX_EXECUTION_DATE='2026-03-20T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-20T00:00:00+00:00'
+Task instance is in running state
+ Previous state of the Task instance: queued
+Current task name:extract state:scheduled start_date:None
+Dag name:my_izzet_dag2 and current dag run status:running
+[2026-03-20T11:14:19.491-0400] {taskinstance.py:740} INFO - ::endgroup::
+[2026-03-20 11:14:19,494] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-20T11:14:19.494-0400] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-20T11:14:19.496-0400] {taskinstance.py:349} INFO - ::group::Post task execution logs
+[2026-03-20T11:14:19.497-0400] {taskinstance.py:361} INFO - Marking task as SUCCESS. dag_id=my_izzet_dag2, task_id=extract, run_id=manual__2026-03-20T00:00:00+00:00, execution_date=20260320T000000, start_date=, end_date=20260320T151419
+Task instance in success state
+ Previous state of the Task instance: running
+Dag name:my_izzet_dag2 queued_at:None
+Task hostname:mbpm1.local operator:PythonOperator
+[2026-03-20T11:14:19.501-0400] {dag.py:4410} INFO - [DAG TEST] end task task_id=extract map_index=-1
+[2026-03-20T11:14:19.507-0400] {dag.py:4396} INFO - [DAG TEST] starting task_id=transform map_index=-1
+[2026-03-20T11:14:19.507-0400] {dag.py:4399} INFO - [DAG TEST] running task <TaskInstance: my_izzet_dag2.transform manual__2026-03-20T00:00:00+00:00 [scheduled]>
+[2026-03-20 11:14:19,515] {taskinstance.py:3158} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='airflow' AIRFLOW_CTX_DAG_ID='my_izzet_dag2' AIRFLOW_CTX_TASK_ID='transform' AIRFLOW_CTX_EXECUTION_DATE='2026-03-20T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-20T00:00:00+00:00'
+[2026-03-20T11:14:19.515-0400] {taskinstance.py:3158} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='airflow' AIRFLOW_CTX_DAG_ID='my_izzet_dag2' AIRFLOW_CTX_TASK_ID='transform' AIRFLOW_CTX_EXECUTION_DATE='2026-03-20T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-20T00:00:00+00:00'
+Task instance is in running state
+ Previous state of the Task instance: queued
+Current task name:transform state:scheduled start_date:None
+Dag name:my_izzet_dag2 and current dag run status:running
+[2026-03-20T11:14:19.515-0400] {taskinstance.py:740} INFO - ::endgroup::
+[2026-03-20 11:14:19,519] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-20T11:14:19.519-0400] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-20T11:14:19.520-0400] {taskinstance.py:349} INFO - ::group::Post task execution logs
+[2026-03-20T11:14:19.520-0400] {taskinstance.py:361} INFO - Marking task as SUCCESS. dag_id=my_izzet_dag2, task_id=transform, run_id=manual__2026-03-20T00:00:00+00:00, execution_date=20260320T000000, start_date=, end_date=20260320T151419
+Task instance in success state
+ Previous state of the Task instance: running
+Dag name:my_izzet_dag2 queued_at:None
+Task hostname:mbpm1.local operator:PythonOperator
+[2026-03-20T11:14:19.524-0400] {dag.py:4410} INFO - [DAG TEST] end task task_id=transform map_index=-1
+[2026-03-20T11:14:19.529-0400] {dag.py:4396} INFO - [DAG TEST] starting task_id=load map_index=-1
+[2026-03-20T11:14:19.529-0400] {dag.py:4399} INFO - [DAG TEST] running task <TaskInstance: my_izzet_dag2.load manual__2026-03-20T00:00:00+00:00 [scheduled]>
+[2026-03-20 11:14:19,536] {taskinstance.py:3158} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='airflow' AIRFLOW_CTX_DAG_ID='my_izzet_dag2' AIRFLOW_CTX_TASK_ID='load' AIRFLOW_CTX_EXECUTION_DATE='2026-03-20T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-20T00:00:00+00:00'
+[2026-03-20T11:14:19.536-0400] {taskinstance.py:3158} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='airflow' AIRFLOW_CTX_DAG_ID='my_izzet_dag2' AIRFLOW_CTX_TASK_ID='load' AIRFLOW_CTX_EXECUTION_DATE='2026-03-20T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-03-20T00:00:00+00:00'
+Task instance is in running state
+ Previous state of the Task instance: queued
+Current task name:load state:scheduled start_date:None
+Dag name:my_izzet_dag2 and current dag run status:running
+[2026-03-20T11:14:19.536-0400] {taskinstance.py:740} INFO - ::endgroup::
+{'total_order_value': 1236.7}
+[2026-03-20 11:14:19,537] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-20T11:14:19.537-0400] {python.py:240} INFO - Done. Returned value was: None
+[2026-03-20T11:14:19.539-0400] {taskinstance.py:349} INFO - ::group::Post task execution logs
+[2026-03-20T11:14:19.539-0400] {taskinstance.py:361} INFO - Marking task as SUCCESS. dag_id=my_izzet_dag2, task_id=load, run_id=manual__2026-03-20T00:00:00+00:00, execution_date=20260320T000000, start_date=, end_date=20260320T151419
+Task instance in success state
+ Previous state of the Task instance: running
+Dag name:my_izzet_dag2 queued_at:None
+Task hostname:mbpm1.local operator:PythonOperator
+[2026-03-20T11:14:19.543-0400] {dag.py:4410} INFO - [DAG TEST] end task task_id=load map_index=-1
+[2026-03-20T11:14:19.544-0400] {dagrun.py:854} INFO - Marking run <DagRun my_izzet_dag2 @ 2026-03-20 00:00:00+00:00: manual__2026-03-20T00:00:00+00:00, state:running, queued_at: None. externally triggered: False> successful
+Dag run in success state
+Dag run start:2026-03-20 00:00:00+00:00 end:2026-03-20 15:14:19.544992+00:00
+[2026-03-20T11:14:19.545-0400] {dagrun.py:905} INFO - DagRun Finished: dag_id=my_izzet_dag2, execution_date=2026-03-20 00:00:00+00:00, run_id=manual__2026-03-20T00:00:00+00:00, run_start_date=2026-03-20 00:00:00+00:00, run_end_date=2026-03-20 15:14:19.544992+00:00, run_duration=54859.544992, state=success, external_trigger=False, run_type=manual, data_interval_start=2026-03-20 00:00:00+00:00, data_interval_end=2026-03-20 00:00:00+00:00, dag_hash=None

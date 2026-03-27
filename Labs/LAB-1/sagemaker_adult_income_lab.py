@@ -97,8 +97,8 @@ def resolve_dataset_paths() -> tuple[Path, Path]:
     candidates = [
         script_dir / "adult",
         script_dir,
-        Path("/home/ec2-user/SageMaker/in class lab 1/adult"),
-        Path("/home/ec2-user/SageMaker/in class lab 1"),
+        Path("/home/ec2-user/SageMaker/Labs/LAB-1/adult"),
+        Path("/home/ec2-user/SageMaker/Labs/LAB-1"),
         Path("/home/ec2-user/SageMaker/adult"),
         Path("/home/ec2-user/SageMaker"),
         Path("/Users/zizo/Downloads"),
