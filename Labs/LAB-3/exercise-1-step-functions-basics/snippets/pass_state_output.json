@@ -1,0 +1,4 @@
+{
+  "IsHelloWorldExample": "{% $states.input.hello_world %}",
+  "ExecutionWaitTimeInSeconds": "{% $states.input.wait %}"
+}

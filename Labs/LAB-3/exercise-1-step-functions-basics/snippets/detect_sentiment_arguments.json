@@ -1,0 +1,4 @@
+{
+  "LanguageCode": "en",
+  "Text": "{% $states.context.Execution.Input.feedback_comment %}"
+}

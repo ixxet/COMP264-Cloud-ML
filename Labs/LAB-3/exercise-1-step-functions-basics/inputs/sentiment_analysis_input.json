@@ -1,0 +1,5 @@
+{
+  "hello_world": false,
+  "wait": 42,
+  "feedback_comment": "This getting started with Step Functions workshop is a challenge!"
+}
