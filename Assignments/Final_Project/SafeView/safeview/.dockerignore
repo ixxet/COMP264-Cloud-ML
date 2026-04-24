@@ -1,0 +1,5 @@
+.chalice/deployed
+.chalice/deployments
+__pycache__
+*.pyc
+.DS_Store

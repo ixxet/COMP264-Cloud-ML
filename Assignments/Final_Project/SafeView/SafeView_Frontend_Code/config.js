@@ -1,0 +1,1 @@
+window.SAFEVIEW_API_BASE = window.SAFEVIEW_API_BASE || "";

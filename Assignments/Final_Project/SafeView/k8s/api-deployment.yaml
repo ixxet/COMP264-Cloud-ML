@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: safeview-api
+  labels:
+    app.kubernetes.io/name: safeview-api
+    app.kubernetes.io/part-of: safeview
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: safeview-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: safeview-api
+        app.kubernetes.io/part-of: safeview
+    spec:
+      containers:
+        - name: api
+          image: safeview-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: safeview-aws-credentials
+          env:
+            - name: AWS_REGION
+              value: us-east-1
+            - name: AWS_DEFAULT_REGION
+              value: us-east-1
+            - name: AWS_EC2_METADATA_DISABLED
+              value: "true"
+            - name: SAFEVIEW_BUCKET
+              value: safeview-images-izzet-225989375368-dev
+            - name: SAFEVIEW_REGION
+              value: us-east-1
+            - name: MODERATION_THRESHOLD
+              value: "80.0"
+            - name: SAFEVIEW_DEBUG
+              value: "false"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

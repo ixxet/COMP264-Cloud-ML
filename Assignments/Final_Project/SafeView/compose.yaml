@@ -1,0 +1,30 @@
+services:
+  safeview-api:
+    build:
+      context: ./safeview
+    image: safeview-api:local
+    expose:
+      - "8000"
+    environment:
+      AWS_PROFILE: ${AWS_PROFILE:-safeview}
+      AWS_SDK_LOAD_CONFIG: "1"
+      AWS_REGION: us-east-1
+      AWS_DEFAULT_REGION: us-east-1
+      SAFEVIEW_BUCKET: safeview-images-izzet-225989375368-dev
+      SAFEVIEW_REGION: us-east-1
+      MODERATION_THRESHOLD: "80.0"
+      SAFEVIEW_DEBUG: "false"
+    volumes:
+      - ${HOME}/.aws:/root/.aws:ro
+
+  safeview-web:
+    build:
+      context: ./SafeView_Frontend_Code
+    image: safeview-web:local
+    ports:
+      - "8080:80"
+    environment:
+      SAFEVIEW_API_BASE: /api
+      SAFEVIEW_API_UPSTREAM: http://safeview-api:8000
+    depends_on:
+      - safeview-api

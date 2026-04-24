@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SafeView — Content Moderation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+
+<body>
+<div class="shell">
+
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <header>
+    <div class="logo">
+      <div class="logo-mark">
+        <!-- Shield icon -->
+        <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 1.5L2 4v4c0 3 2.5 5.5 6 6 3.5-.5 6-3 6-6V4L8 1.5z"/>
+          <path d="M5.5 8l1.5 1.5 3-3"/>
+        </svg>
+      </div>
+      <span class="logo-name">SafeView</span>
+      <span class="logo-tag">/ Content Moderation</span>
+    </div>
+    <span class="header-meta">AWS Rekognition + Comprehend</span>
+  </header>
+
+  <!-- ── Main ───────────────────────────────────────────────── -->
+  <main>
+
+    <!-- Upload panel -->
+    <div class="panel" id="upload-panel">
+      <div class="panel-header">
+        <div class="panel-dot active" id="upload-dot"></div>
+        <span class="panel-label">Image upload</span>
+      </div>
+
+      <!-- Drop zone -->
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" accept="image/jpeg,image/png" aria-label="Upload image file"/>
+
+        <!-- Default state -->
+        <div class="drop-default">
+          <div class="drop-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <span class="drop-title">Drop image here or click to browse</span>
+          <span class="drop-sub">JPEG / PNG · max 5 MB</span>
+        </div>
+
+        <!-- File selected state -->
+        <div class="file-preview" id="file-preview">
+          <img class="preview-thumb" id="preview-thumb" src="" alt="Preview"/>
+          <span class="preview-name" id="preview-name">—</span>
+          <span class="preview-size" id="preview-size">—</span>
+        </div>
+      </div>
+
+      <!-- Error banner -->
+      <div class="error-banner" id="error-banner" role="alert">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span id="error-text">Error message</span>
+        <button onclick="dismissError()" aria-label="Dismiss">×</button>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <div class="threshold-block">
+          <label for="threshold-slider">Confidence threshold</label>
+          <div class="threshold-row">
+            <input type="range" id="threshold-slider" min="50" max="99" value="80" step="1" aria-label="Confidence threshold"/>
+            <span class="threshold-val" id="threshold-val">80%</span>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="analyze-btn" disabled onclick="runAnalysis()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          Analyze image
+        </button>
+      </div>
+
+      <!-- Status bar -->
+      <div class="status-bar" id="status-bar">
+        <div class="status-spinner" id="spinner"></div>
+        <span id="status-text">Ready — select an image to begin</span>
+      </div>
+    </div><!-- /upload-panel -->
+
+    <!-- Results panel -->
+    <div class="panel animate-in" id="results-panel">
+      <div class="panel-header">
+        <div class="panel-dot" id="results-dot"></div>
+        <span class="panel-label">Moderation report</span>
+        <div class="panel-actions">
+          <button class="btn btn-ghost btn-compact" onclick="downloadReport()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Download JSON
+          </button>
+          <button class="btn btn-ghost btn-compact" onclick="resetUI()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.8"/>
+            </svg>
+            New analysis
+          </button>
+        </div>
+      </div>
+
+      <div class="results-grid">
+        <!-- Left: image + verdict + meta -->
+        <div class="results-left">
+          <div class="image-thumb-wrap">
+            <img id="result-thumb" src="" alt="Analysed image"/>
+          </div>
+
+          <div class="verdict-badge" id="verdict-badge">
+            <div class="verdict-dot"></div>
+            <span id="verdict-text">—</span>
+          </div>
+
+          <div class="meta-block">
+            <div class="meta-row">
+              <span class="meta-key">file</span>
+              <span class="meta-val" id="meta-file">—</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">threshold</span>
+              <span class="meta-val" id="meta-threshold">—</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">session</span>
+              <span class="meta-val meta-session" id="meta-session">—</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">analysed</span>
+              <span class="meta-val" id="meta-ts">—</span>
+            </div>
+          </div>
+
+          <!-- Threshold re-run -->
+          <div class="rerun-row">
+            <div class="rerun-label">
+              <span>Re-run threshold</span>
+              <span class="threshold-val threshold-val-small" id="rerun-val">80%</span>
+            </div>
+            <input type="range" id="rerun-slider" min="50" max="99" value="80" step="1"
+                   class="rerun-slider" aria-label="Adjust threshold and re-run"
+                   oninput="scheduleRerun(this.value)"/>
+          </div>
+
+          <div class="left-actions">
+            <button class="btn btn-ghost btn-secondary-action" onclick="downloadReport()">
+              Download report
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: detail -->
+        <div class="results-right">
+
+          <!-- Summary -->
+          <div>
+            <div class="section-head">
+              <span class="section-title">Summary</span>
+            </div>
+            <div class="summary-text" id="summary-text">—</div>
+          </div>
+
+          <!-- Visual moderation labels -->
+          <div>
+            <div class="section-head">
+              <span class="section-title">Visual moderation</span>
+              <span class="section-badge" id="labels-count">0 labels</span>
+            </div>
+            <div id="labels-container">
+              <div class="empty-state">No moderation concerns detected</div>
+            </div>
+          </div>
+
+          <!-- Text sentiment -->
+          <div>
+            <div class="section-head">
+              <span class="section-title">Text sentiment</span>
+              <span class="section-badge" id="sentiment-badge">Comprehend</span>
+            </div>
+            <div id="sentiment-container">
+              <div class="empty-state">No text detected in image</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- /results-panel -->
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <span>SafeView — COMP 264 Cloud Machine Learning</span>
+    <span>AWS Rekognition · AWS Comprehend · AWS S3 · Chalice</span>
+  </footer>
+
+</div><!-- /shell -->
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

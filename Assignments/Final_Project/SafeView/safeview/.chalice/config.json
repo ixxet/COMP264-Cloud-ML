@@ -1,0 +1,16 @@
+{
+  "version": "2.0",
+  "app_name": "safeview",
+  "stages": {
+    "dev": {
+      "api_gateway_stage": "api",
+      "environment_variables": {
+        "SAFEVIEW_BUCKET": "safeview-images-izzet-225989375368-dev",
+        "SAFEVIEW_REGION": "us-east-1",
+        "MODERATION_THRESHOLD": "80.0"
+      },
+      "autogen_policy": false,
+      "iam_policy_file": "dev-policy.json"
+    }
+  }
+}

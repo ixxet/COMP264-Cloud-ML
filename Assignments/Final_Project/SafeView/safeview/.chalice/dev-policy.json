@@ -1,0 +1,41 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "S3ImageAccess",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject"
+      ],
+      "Resource": "arn:aws:s3:::safeview-images-izzet-225989375368-dev/*"
+    },
+    {
+      "Sid": "RekognitionAccess",
+      "Effect": "Allow",
+      "Action": [
+        "rekognition:DetectModerationLabels",
+        "rekognition:DetectText"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ComprehendAccess",
+      "Effect": "Allow",
+      "Action": [
+        "comprehend:DetectSentiment"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CloudWatchLogs",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*"
+    }
+  ]
+}

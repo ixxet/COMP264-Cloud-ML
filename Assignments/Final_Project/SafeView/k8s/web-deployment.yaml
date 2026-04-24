@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: safeview-web
+  labels:
+    app.kubernetes.io/name: safeview-web
+    app.kubernetes.io/part-of: safeview
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: safeview-web
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: safeview-web
+        app.kubernetes.io/part-of: safeview
+    spec:
+      containers:
+        - name: web
+          image: safeview-web:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+          env:
+            - name: SAFEVIEW_API_BASE
+              value: /api
+            - name: SAFEVIEW_API_UPSTREAM
+              value: http://safeview-api.safeview.svc.cluster.local:8000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi

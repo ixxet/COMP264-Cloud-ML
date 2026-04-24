@@ -1,0 +1,4 @@
+# Runtime requirements for the deployed Lambda package.
+# SafeView relies on the AWS Lambda Python runtime's bundled boto3/botocore.
+# Install Chalice and boto3 in the local development environment, not here, so
+# deployment stays small and avoids Lambda create-function upload timeouts.
