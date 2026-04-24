@@ -33,7 +33,7 @@ placeholder values only.
 
 ```text
 ghcr.io/ixxet/safeview-api:ai-review-20260424
-ghcr.io/ixxet/safeview-web:ai-review-20260424
+ghcr.io/ixxet/safeview-web:ai-review-20260424c
 ```
 
 For a stronger production GitOps flow, replace the demonstration tag with
@@ -51,6 +51,17 @@ SAFEVIEW_LLM_MODEL=mistralai/Mistral-7B-Instruct-v0.3
 
 The LLM receives only the structured SafeView report. Rekognition and Comprehend
 remain the authoritative moderation services.
+
+## Public Website
+
+The current public presentation URL is:
+
+```text
+https://view.lintellabs.net
+```
+
+Traffic reaches the Kubernetes web service through the Cloudflare hosting path.
+The frontend then proxies `/api` requests to the internal SafeView API service.
 
 ## Manual Verification
 

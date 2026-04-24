@@ -7,6 +7,8 @@ analysis, and an optional vLLM AI review layer for Kubernetes deployment.
 
 The maintained project source is in [SafeView/](SafeView/).
 
+Public demo: [view.lintellabs.net](https://view.lintellabs.net)
+
 | Path | Purpose |
 |---|---|
 | [SafeView/README.md](SafeView/README.md) | Main academic/recruiter-facing landing page with architecture, storage, framework, file inventory, and deployment strategy. |

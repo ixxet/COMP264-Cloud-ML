@@ -6,6 +6,8 @@ Izzet Abidi (300898230) | Centennial College | AI - Software Engineering Technol
 
 This repository is the working portfolio for COMP 264. It starts with direct calls to managed AWS AI services, moves into SageMaker training and deployment, broadens into workflow orchestration with Apache Airflow and AWS Step Functions, and finishes with SafeView: a deployable full-stack content moderation application. The common thread is learning how cloud ML work is assembled from storage, compute, managed services, automation, packaging, and cleanup discipline.
 
+Final project public demo: [view.lintellabs.net](https://view.lintellabs.net)
+
 ## Course Pipeline View
 
 ```mermaid

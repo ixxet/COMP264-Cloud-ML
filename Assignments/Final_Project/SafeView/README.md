@@ -11,6 +11,8 @@ training. Its main engineering goal is to show how a small application can bind
 cloud storage, AI service calls, API validation, report generation, container
 packaging, and Kubernetes deployment assets into one reproducible system.
 
+**Public demo:** [view.lintellabs.net](https://view.lintellabs.net)
+
 ## Academic Positioning
 
 | Requirement area | SafeView implementation |
@@ -31,6 +33,133 @@ Mermaid source files are stored in [diagrams/](diagrams/):
 | [application-infrastructure.mmd](diagrams/application-infrastructure.mmd) | End-to-end application infrastructure and AWS service boundaries. |
 | [request-sequence.mmd](diagrams/request-sequence.mmd) | Request flow for full analysis and threshold re-filtering. |
 | [deployment-topology.mmd](diagrams/deployment-topology.mmd) | Packaging and deployment path from GitHub/GHCR to Kubernetes and AWS. |
+
+### Application Infrastructure
+
+```mermaid
+flowchart LR
+    user["Reviewer or end user"] --> browser["Browser"]
+    browser --> web["safeview-web<br/>nginx static frontend"]
+    web --> api["safeview-api<br/>Python Chalice API"]
+
+    api --> validator["Validation gates<br/>JSON, threshold, image bytes"]
+    validator --> s3uploads["Amazon S3<br/>uploads/session/image"]
+    s3uploads --> rekognition["Amazon Rekognition<br/>moderation labels + OCR"]
+    rekognition --> comprehend["Amazon Comprehend<br/>sentiment on detected text"]
+    comprehend --> report["Report builder<br/>verdict + JSON output"]
+    rekognition --> report
+    report --> vllm["vLLM<br/>grounded AI review"]
+    vllm --> report
+    report --> audit["Amazon S3<br/>logs/session/audit.json"]
+    report --> browser
+
+    subgraph aws["AWS managed services"]
+        s3uploads
+        rekognition
+        comprehend
+        audit
+    end
+
+    subgraph app["SafeView application"]
+        web
+        api
+        validator
+        report
+    end
+
+    subgraph localai["Local AI platform"]
+        vllm
+    end
+
+    subgraph deployment["Deployment targets"]
+        lambda["Lambda + API Gateway<br/>AWS-native Chalice"]
+        k8s["Kubernetes<br/>safeview namespace"]
+        compose["Docker Compose<br/>local verification"]
+    end
+
+    api -.same backend source.-> lambda
+    web -.container runtime.-> k8s
+    api -.container runtime.-> k8s
+    web -.local runtime.-> compose
+    api -.local runtime.-> compose
+```
+
+### Request Sequence
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User
+    participant UI as Static frontend
+    participant API as Chalice API
+    participant S3 as Amazon S3
+    participant Rekognition as Amazon Rekognition
+    participant Comprehend as Amazon Comprehend
+    participant vLLM as Platform vLLM
+
+    User->>UI: Select JPEG or PNG image
+    UI->>UI: Validate MIME type and 5 MB limit
+    UI->>API: POST /analyze with base64 image and threshold
+    API->>API: Validate JSON, threshold, filename, base64, and image signature
+    API->>S3: PutObject uploads/session/image
+    API->>Rekognition: DetectModerationLabels from S3 object
+    API->>Rekognition: DetectText from S3 object
+    alt OCR text exists
+        API->>Comprehend: DetectSentiment for extracted text
+        Comprehend-->>API: Sentiment label and scores
+    else No OCR text
+        API->>API: Skip sentiment analysis
+    end
+    Rekognition-->>API: Labels and text detections
+    API->>API: Apply confidence threshold and build report
+    opt AI review enabled
+        API->>vLLM: Explain structured AWS report
+        vLLM-->>API: Grounded ai_review JSON
+    end
+    API->>S3: PutObject logs/session/audit.json
+    API-->>UI: JSON moderation report
+    UI-->>User: Render verdict, labels, sentiment, and download option
+
+    User->>UI: Adjust threshold after report
+    UI->>API: POST /analyze/threshold with cached labels
+    API->>API: Validate cached labels and threshold
+    API->>API: Re-filter cached labels without AWS AI calls
+    opt AI review enabled
+        API->>vLLM: Explain re-filtered report
+        vLLM-->>API: Updated ai_review JSON
+    end
+    API-->>UI: Updated JSON moderation report
+```
+
+### Deployment Topology
+
+```mermaid
+flowchart TD
+    repo["GitHub repository<br/>COMP264-Cloud-ML"] --> source["SafeView source<br/>frontend + backend + k8s"]
+    source --> apiimage["Build API image<br/>ghcr.io/ixxet/safeview-api"]
+    source --> webimage["Build web image<br/>ghcr.io/ixxet/safeview-web"]
+
+    apiimage --> ghcr["GitHub Container Registry"]
+    webimage --> ghcr
+
+    source --> kustomize["Kustomize path<br/>Assignments/Final_Project/SafeView/k8s"]
+    flux["Flux Kustomization<br/>platform repository"] --> kustomize
+    kustomize --> namespace["Kubernetes namespace<br/>safeview"]
+
+    ghcr --> pullsecret["safeview-ghcr-pull<br/>image pull Secret"]
+    awssecret["safeview-aws-credentials<br/>runtime AWS Secret"] --> apipod["safeview-api Deployment"]
+    pullsecret --> apipod
+    pullsecret --> webpod["safeview-web Deployment"]
+
+    namespace --> apipod
+    namespace --> webpod
+    apipod --> apisvc["safeview-api ClusterIP Service"]
+    apipod --> vllm["ai/vllm Service<br/>Mistral-7B-Instruct"]
+    webpod --> websvc["safeview-web LoadBalancer Service"]
+    websvc --> cilium["Cilium load-balancer path"]
+    cilium --> cloudflare["Cloudflare Tunnel<br/>view.lintellabs.net"]
+    apisvc --> aws["AWS S3 + Rekognition + Comprehend"]
+```
 
 ## How SafeView Works
 
@@ -163,7 +292,7 @@ The Kubernetes path uses two images:
 
 ```text
 ghcr.io/ixxet/safeview-api:ai-review-20260424
-ghcr.io/ixxet/safeview-web:ai-review-20260424
+ghcr.io/ixxet/safeview-web:ai-review-20260424c
 ```
 
 The cluster requires two externally managed Secrets:
@@ -287,6 +416,7 @@ The implementation has been verified through these checks:
 | Kubernetes health endpoint | `/api/health` returned `{"status":"ok","service":"safeview"}` in the cluster deployment. |
 | Threshold endpoint | `/api/analyze/threshold` returned a valid SafeView report with a vLLM `ai_review` block and without calling AWS AI services. |
 | Full public analysis | `https://view.lintellabs.net/api/analyze` completed S3 upload, Rekognition analysis, report generation, and vLLM review. |
+| Large public upload | A 3.1 MB base64 JSON image request completed with HTTP 200 after the nginx upload limit was set to 8 MB. |
 | Secret scan | No pasted AWS access key or secret was found in the project path. |
 
 ## Presentation Talking Points
