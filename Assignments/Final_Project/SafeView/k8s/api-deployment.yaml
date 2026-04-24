@@ -16,6 +16,8 @@ spec:
         app.kubernetes.io/name: safeview-api
         app.kubernetes.io/part-of: safeview
     spec:
+      imagePullSecrets:
+        - name: safeview-ghcr-pull
       containers:
         - name: api
           image: safeview-api:latest

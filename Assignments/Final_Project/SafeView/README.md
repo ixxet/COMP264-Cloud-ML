@@ -9,10 +9,10 @@ downloadable moderation report.
 
 | Target | Status | What this means |
 |---|---|---|
-| macOS Docker Compose | Running now | The app is currently running on this Mac through Docker Desktop/Compose at `http://127.0.0.1:8080`. |
+| macOS Docker Compose | Optional local mode | The app can run on this Mac through Docker Desktop/Compose at `http://127.0.0.1:8080`, but this is no longer the primary runtime. |
 | AWS serverless | Deployed | The Chalice backend was also deployed to AWS Lambda/API Gateway for the assignment-compatible path. |
-| Talos Kubernetes | Not deployed yet | The current kube context is `admin@talos-tower`, but there is no `safeview` namespace, pod, service, or Flux Kustomization running there yet. |
-| Flux GitOps | Manifests ready | The `k8s/` folder is ready for Flux after the images are pushed to a registry and credentials are provided as a Kubernetes Secret. |
+| Talos Kubernetes | Running now | The app is deployed in the `safeview` namespace on `admin@talos-tower` and exposed through LoadBalancer IP `192.168.50.206`. |
+| Flux GitOps | Manifests ready | The `k8s/` folder is ready for Flux, but the current Talos deployment was applied directly with `kubectl apply -k`. |
 
 Talos does not pull YAML from GitHub by itself. Talos runs the Kubernetes node.
 Flux runs inside Kubernetes and reconciles YAML from GitHub into the cluster.
@@ -151,8 +151,9 @@ Required first:
 
 1. Push images to GHCR.
 2. Create a `safeview-aws-credentials` Secret in the cluster.
-3. Add the `k8s/` path to the Flux repo or create a Flux Kustomization that points to it.
-4. Expose `safeview-web` through your existing Cilium load-balancer pattern.
+3. Create a `safeview-ghcr-pull` image pull Secret if the GHCR packages are private.
+4. Add the `k8s/` path to the Flux repo or create a Flux Kustomization that points to it.
+5. Expose `safeview-web` through your existing Cilium load-balancer pattern.
 
 Images expected by `k8s/kustomization.yaml`:
 
@@ -181,6 +182,12 @@ Apply manually for a quick test:
 kubectl apply -k k8s
 ```
 
+Current Talos URL:
+
+```text
+http://192.168.50.206
+```
+
 Flux version: point a Flux `Kustomization` at
 `Assignments/Final_Project/SafeView/k8s` in the GitHub repo.
 
@@ -198,18 +205,28 @@ Flux version: point a Flux `Kustomization` at
 
 ## Current Answer: Mac or Talos?
 
-Right now SafeView is running on your Mac through Docker Compose.
+Right now SafeView is running on the Talos tower in Kubernetes.
 
-It is not currently running as a pod on the Talos server. The repo contains
-Kubernetes manifests that can make it run there, but Flux has not applied them
-yet and the cluster does not currently show a `safeview` namespace or SafeView
-pods.
+It is deployed in namespace `safeview` with two pods:
+
+- `safeview-web`
+- `safeview-api`
+
+The public LAN endpoint is:
+
+```text
+http://192.168.50.206
+```
+
+The Mac Docker Compose path remains useful for local development, but it is not
+the primary runtime after the Talos deployment.
 
 ## Verification Performed
 
 - `docker compose build` completed for `safeview-api` and `safeview-web`.
-- `docker compose ps` showed both containers running locally.
-- `curl http://127.0.0.1:8080/` returned the frontend.
-- `curl http://127.0.0.1:8080/api/health` returned `{"status":"ok","service":"safeview"}`.
+- `docker compose ps` showed both containers running locally during local testing.
+- `curl http://192.168.50.206/` returned the frontend from Talos.
+- `curl http://192.168.50.206/api/health` returned `{"status":"ok","service":"safeview"}` from Talos.
+- `curl http://192.168.50.206/api/analyze/threshold` returned a valid SafeView report from Talos.
 - `kubectl kustomize k8s` rendered valid Kubernetes YAML.
 - Secret scans found no copied AWS access key or secret in the final project path.

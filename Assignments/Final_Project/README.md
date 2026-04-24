@@ -18,6 +18,5 @@ created separately. Do not commit real AWS credentials.
 For local Docker Compose, the stack mounts `~/.aws` read-only and defaults to
 `AWS_PROFILE=safeview`, so no access keys need to be written into the project.
 
-Current runtime: SafeView is running locally on macOS through Docker Compose at
-`http://127.0.0.1:8080`. It is not currently deployed as a pod on the Talos
-cluster.
+Current runtime: SafeView is running on the Talos tower in the `safeview`
+namespace and is exposed at `http://192.168.50.206`.
