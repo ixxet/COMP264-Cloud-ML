@@ -1,22 +1,35 @@
-# Final Project – SafeView
+# Final Project - SafeView
 
-SafeView is a content moderation web application for COMP 264. It combines a
-static browser frontend with a Python Chalice backend that stores uploads in S3
-and calls AWS Rekognition and Comprehend.
+SafeView is the COMP 264 final project: a content moderation web application
+that combines a static browser frontend with a Python Chalice backend, Amazon
+S3 storage, Amazon Rekognition image analysis, and Amazon Comprehend sentiment
+analysis.
 
-Project location:
+The maintained project source is in [SafeView/](SafeView/).
 
-- `SafeView/safeview/` – Chalice backend
-- `SafeView/SafeView_Frontend_Code/` – static frontend and nginx container
-- `SafeView/k8s/` – Kubernetes manifests for Flux
-- `SafeView/compose.yaml` – local Docker Compose stack
-- `SafeView/README.md` – detailed architecture, storage, framework, and deployment notes
+| Path | Purpose |
+|---|---|
+| [SafeView/README.md](SafeView/README.md) | Main academic/recruiter-facing landing page with architecture, storage, framework, file inventory, and deployment strategy. |
+| [SafeView/safeview/](SafeView/safeview/) | Chalice backend source for AWS Lambda/API Gateway and containerized API execution. |
+| [SafeView/SafeView_Frontend_Code/](SafeView/SafeView_Frontend_Code/) | Static frontend source and nginx container packaging. |
+| [SafeView/k8s/](SafeView/k8s/) | Kustomize-ready Kubernetes manifests for manual deployment or Flux reconciliation. |
+| [SafeView/compose.yaml](SafeView/compose.yaml) | Local Docker Compose stack for frontend/API verification. |
+| [SafeView/diagrams/](SafeView/diagrams/) | Mermaid diagram sources for infrastructure, request sequence, and deployment topology. |
+| [SafeView/SafeView_Project_Report.docx](SafeView/SafeView_Project_Report.docx) | Final written report. |
+| [SafeView/SafeView_Presentation.pptx](SafeView/SafeView_Presentation.pptx) | Final presentation deck. |
 
-The Kubernetes manifests expect a `safeview-aws-credentials` Secret to be
-created separately. Do not commit real AWS credentials.
+## Deployment Summary
 
-For local Docker Compose, the stack mounts `~/.aws` read-only and defaults to
-`AWS_PROFILE=safeview`, so no access keys need to be written into the project.
+SafeView supports three deployment paths without changing the core AWS ML
+integration:
 
-Current runtime: SafeView is running on the Talos tower in the `safeview`
-namespace and is exposed at `http://192.168.50.206`.
+| Path | Description |
+|---|---|
+| AWS-native Chalice | Deploys the backend to API Gateway and Lambda while using S3, Rekognition, and Comprehend. |
+| Docker Compose | Runs the nginx frontend and Chalice API container together for local verification. |
+| Kubernetes / Flux | Runs the frontend and API as Kubernetes Deployments from GHCR images, with Flux able to reconcile the `k8s/` path from Git. |
+
+The Kubernetes manifests expect runtime credentials to be created separately as
+a `safeview-aws-credentials` Secret. If GHCR images remain private, the cluster
+also needs a `safeview-ghcr-pull` image pull Secret. Real credentials are not
+stored in this repository.

@@ -1,0 +1,24 @@
+flowchart TD
+    repo["GitHub repository<br/>COMP264-Cloud-ML"] --> source["SafeView source<br/>frontend + backend + k8s"]
+    source --> apiimage["Build API image<br/>ghcr.io/ixxet/safeview-api"]
+    source --> webimage["Build web image<br/>ghcr.io/ixxet/safeview-web"]
+
+    apiimage --> ghcr["GitHub Container Registry"]
+    webimage --> ghcr
+
+    source --> kustomize["Kustomize path<br/>Assignments/Final_Project/SafeView/k8s"]
+    flux["Flux Kustomization<br/>platform repository"] --> kustomize
+    kustomize --> namespace["Kubernetes namespace<br/>safeview"]
+
+    ghcr --> pullsecret["safeview-ghcr-pull<br/>image pull Secret"]
+    awssecret["safeview-aws-credentials<br/>runtime AWS Secret"] --> apipod["safeview-api Deployment"]
+    pullsecret --> apipod
+    pullsecret --> webpod["safeview-web Deployment"]
+
+    namespace --> apipod
+    namespace --> webpod
+    apipod --> apisvc["safeview-api ClusterIP Service"]
+    webpod --> websvc["safeview-web LoadBalancer Service"]
+    websvc --> cilium["Cilium load-balancer path"]
+    cilium --> cloudflare["Cloudflare DNS or Tunnel<br/>planned public URL"]
+    apisvc --> aws["AWS S3 + Rekognition + Comprehend"]

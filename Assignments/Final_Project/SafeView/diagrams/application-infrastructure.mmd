@@ -1,0 +1,39 @@
+flowchart LR
+    user["Reviewer or end user"] --> browser["Browser"]
+    browser --> web["safeview-web<br/>nginx static frontend"]
+    web --> api["safeview-api<br/>Python Chalice API"]
+
+    api --> validator["Validation gates<br/>JSON, threshold, image bytes"]
+    validator --> s3uploads["Amazon S3<br/>uploads/session/image"]
+    s3uploads --> rekognition["Amazon Rekognition<br/>moderation labels + OCR"]
+    rekognition --> comprehend["Amazon Comprehend<br/>sentiment on detected text"]
+    comprehend --> report["Report builder<br/>verdict + JSON output"]
+    rekognition --> report
+    report --> audit["Amazon S3<br/>logs/session/audit.json"]
+    report --> browser
+
+    subgraph aws["AWS managed services"]
+        s3uploads
+        rekognition
+        comprehend
+        audit
+    end
+
+    subgraph app["SafeView application"]
+        web
+        api
+        validator
+        report
+    end
+
+    subgraph deployment["Deployment targets"]
+        lambda["Lambda + API Gateway<br/>AWS-native Chalice"]
+        k8s["Kubernetes<br/>safeview namespace"]
+        compose["Docker Compose<br/>local verification"]
+    end
+
+    api -.same backend source.-> lambda
+    web -.container runtime.-> k8s
+    api -.container runtime.-> k8s
+    web -.local runtime.-> compose
+    api -.local runtime.-> compose

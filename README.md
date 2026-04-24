@@ -141,7 +141,7 @@ By this point, the course work covers the main building blocks of cloud ML syste
 ```bash
 # Exercise 1: S3 file upload
 cd Assignments/1
-python3 izzet_filesuplolad.py --bucket <your-bucket>
+python3 izzet_filesuplolad.py --bucket <bucket-name>
 
 # Exercise 2: Entity extraction
 ./assignment1_ex2_commands.sh "Your text here"
@@ -170,17 +170,17 @@ python3 izzet_income_sagemaker.py
 cd Assignments/Final_Project/SafeView
 
 # Local frontend + backend containers.
-# Uses your local ~/.aws profile; defaults to AWS_PROFILE=safeview.
+# Uses a local AWS profile; defaults to AWS_PROFILE=safeview.
 docker compose up --build
 
 # Frontend:
 # http://127.0.0.1:8080
 
-# Kubernetes manifests for Talos / Flux:
+# Kubernetes manifests for Kustomize / Flux:
 kubectl kustomize k8s
 ```
 
-See [Assignments/Final_Project/SafeView/README.md](Assignments/Final_Project/SafeView/README.md) for the full SafeView deployment notes, storage options, framework choices, and Talos/Flux plan.
+See [Assignments/Final_Project/SafeView/README.md](Assignments/Final_Project/SafeView/README.md) for the full SafeView deployment notes, storage options, framework choices, and Kubernetes/Flux plan.
 
 ### In-Class Lab 1
 

@@ -1,0 +1,33 @@
+sequenceDiagram
+    autonumber
+    actor User
+    participant UI as Static frontend
+    participant API as Chalice API
+    participant S3 as Amazon S3
+    participant Rekognition as Amazon Rekognition
+    participant Comprehend as Amazon Comprehend
+
+    User->>UI: Select JPEG or PNG image
+    UI->>UI: Validate MIME type and 5 MB limit
+    UI->>API: POST /analyze with base64 image and threshold
+    API->>API: Validate JSON, threshold, filename, base64, and image signature
+    API->>S3: PutObject uploads/session/image
+    API->>Rekognition: DetectModerationLabels from S3 object
+    API->>Rekognition: DetectText from S3 object
+    alt OCR text exists
+        API->>Comprehend: DetectSentiment for extracted text
+        Comprehend-->>API: Sentiment label and scores
+    else No OCR text
+        API->>API: Skip sentiment analysis
+    end
+    Rekognition-->>API: Labels and text detections
+    API->>API: Apply confidence threshold and build report
+    API->>S3: PutObject logs/session/audit.json
+    API-->>UI: JSON moderation report
+    UI-->>User: Render verdict, labels, sentiment, and download option
+
+    User->>UI: Adjust threshold after report
+    UI->>API: POST /analyze/threshold with cached labels
+    API->>API: Validate cached labels and threshold
+    API->>API: Re-filter cached labels without AWS AI calls
+    API-->>UI: Updated JSON moderation report
