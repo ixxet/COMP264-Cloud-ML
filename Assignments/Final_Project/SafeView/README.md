@@ -49,11 +49,14 @@ Mermaid source files are stored in [diagrams/](diagrams/):
 7. The backend filters moderation labels using the selected confidence threshold
    and builds a structured report with verdict, summary, labels, OCR text, and
    sentiment scores.
-8. The backend writes an audit record to S3 under
+8. When enabled in Kubernetes, the backend sends the structured report to the
+   platform vLLM service for a grounded AI review. The LLM does not inspect the
+   image and does not override the AWS verdict.
+9. The backend writes an audit record to S3 under
    `logs/<session_uuid>/audit.json`. The audit record excludes image content,
    detected text, user identifiers, and IP addresses.
-9. The frontend renders the report and can download it as JSON.
-10. Threshold re-runs call `POST /analyze/threshold` using cached label data, so
+10. The frontend renders the report, AI review, and JSON download.
+11. Threshold re-runs call `POST /analyze/threshold` using cached label data, so
     threshold changes do not trigger new Rekognition or Comprehend calls.
 
 ## Technology Stack
@@ -68,6 +71,7 @@ Mermaid source files are stored in [diagrams/](diagrams/):
 | Object storage | Amazon S3 | Stores uploaded images and audit JSON records. |
 | Vision ML | Amazon Rekognition | Detects visual moderation labels and OCR text in images. |
 | NLP ML | Amazon Comprehend | Classifies sentiment for text detected inside images. |
+| Local LLM | vLLM with Mistral-7B-Instruct | Adds optional decision-support explanations grounded in the AWS report. |
 | Serverless deployment | Lambda + API Gateway | AWS-native deployment target for the Chalice application. |
 | Container packaging | Docker | Builds separate images for the API and frontend. |
 | Local orchestration | Docker Compose | Runs the API and web containers together for local verification. |
@@ -75,7 +79,7 @@ Mermaid source files are stored in [diagrams/](diagrams/):
 | GitOps path | Flux + Kustomize | Reconciles the `k8s/` manifest path from GitHub into a Kubernetes cluster. |
 | Container registry | GitHub Container Registry | Stores `ghcr.io/ixxet/safeview-api` and `ghcr.io/ixxet/safeview-web` images. |
 | Network exposure | Cilium LoadBalancer pattern | Exposes the web service in the Kubernetes lab environment. |
-| External hosting path | Cloudflare DNS / Tunnel / Pages | Planned public presentation layer for a stable course/recruiter URL. |
+| External hosting path | Cloudflare DNS / Tunnel | Public presentation layer for `https://view.lintellabs.net`. |
 
 ## Framework Choices
 
@@ -130,7 +134,7 @@ work before it reaches the next system boundary.
 | Local containers | Developer verification with both services running in Docker. | `compose.yaml`. |
 | Kubernetes lab deployment | Self-hosted cluster deployment using container images and Kubernetes Services. | `k8s/kustomization.yaml`. |
 | Flux GitOps deployment | Declarative reconciliation from GitHub into Kubernetes. | Flux Kustomization pointing at `Assignments/Final_Project/SafeView/k8s`. |
-| Cloudflare public hosting | Planned public presentation URL for course and recruiter review. | Cloudflare DNS/Pages/Tunnel path selected during the hosting pass. |
+| Cloudflare public hosting | Public presentation URL for course and recruiter review. | `https://view.lintellabs.net` through Cloudflare Tunnel. |
 
 ### AWS-Native Deployment
 
@@ -158,8 +162,8 @@ Compose; no credentials are stored in the repository.
 The Kubernetes path uses two images:
 
 ```text
-ghcr.io/ixxet/safeview-api:latest
-ghcr.io/ixxet/safeview-web:latest
+ghcr.io/ixxet/safeview-api:ai-review-20260424
+ghcr.io/ixxet/safeview-web:ai-review-20260424
 ```
 
 The cluster requires two externally managed Secrets:
@@ -188,17 +192,23 @@ immutable Kubernetes host OS, and Kubernetes runs the SafeView pods.
 
 ### Cloudflare Hosting Path
 
-Cloudflare can provide the stable public URL after the internal cluster route is
-validated. Two practical patterns are available:
+Cloudflare provides the stable public URL after the internal cluster route is
+validated. The active URL is:
+
+```text
+https://view.lintellabs.net
+```
+
+Two practical patterns are available:
 
 | Pattern | Description |
 |---|---|
 | Cloudflare Tunnel to Kubernetes | Keeps the app running in Kubernetes and publishes the web service through a Cloudflare-managed tunnel and DNS record. |
 | Cloudflare Pages plus API origin | Hosts the static frontend on Cloudflare Pages and points API traffic to either the AWS API Gateway URL or a tunnel-backed Kubernetes API route. |
 
-The cleanest public demo path is usually Cloudflare Tunnel to the Kubernetes web
-service because the current nginx frontend already proxies `/api` to the
-backend inside the cluster.
+The active demo path uses Cloudflare Tunnel to the Kubernetes web service
+because the current nginx frontend already proxies `/api` to the backend inside
+the cluster.
 
 ## Meaningful File Inventory
 
@@ -242,6 +252,7 @@ backend inside the cluster.
 | `safeview/chalicelib/s3_handler.py` | Owns S3 upload and audit-log writing, including UUID session folders and sanitized filenames. |
 | `safeview/chalicelib/orchestrator.py` | Coordinates Rekognition moderation, Rekognition OCR, conditional Comprehend sentiment analysis, and threshold filtering. |
 | `safeview/chalicelib/report.py` | Converts normalized AI results into the final report schema, verdict, and human-readable summary. |
+| `safeview/chalicelib/llm_reviewer.py` | Optional vLLM integration that turns the structured report into a grounded AI review without changing the AWS verdict. |
 | `safeview/chalicelib/__init__.py` | Marks `chalicelib` as a Python package for Chalice imports. |
 | `safeview/.chalice/config.json` | Chalice stage configuration, including environment variables for bucket, region, debug mode, and default threshold. |
 | `safeview/.chalice/dev-policy.json` | IAM policy used by Chalice for S3, Rekognition, and Comprehend permissions. |
@@ -274,7 +285,8 @@ The implementation has been verified through these checks:
 | Docker Compose smoke test | Frontend and API containers ran together with nginx proxying `/api`. |
 | Kubernetes manifest render | `kubectl kustomize k8s` rendered valid YAML. |
 | Kubernetes health endpoint | `/api/health` returned `{"status":"ok","service":"safeview"}` in the cluster deployment. |
-| Threshold endpoint | `/api/analyze/threshold` returned a valid SafeView report without calling AWS AI services. |
+| Threshold endpoint | `/api/analyze/threshold` returned a valid SafeView report with a vLLM `ai_review` block and without calling AWS AI services. |
+| Full public analysis | `https://view.lintellabs.net/api/analyze` completed S3 upload, Rekognition analysis, report generation, and vLLM review. |
 | Secret scan | No pasted AWS access key or secret was found in the project path. |
 
 ## Presentation Talking Points
@@ -282,6 +294,8 @@ The implementation has been verified through these checks:
 SafeView is best presented as a managed cloud ML integration project:
 
 - Rekognition and Comprehend are used as production-style managed ML APIs.
+- vLLM adds local AI decision support by explaining the AWS report rather than
+  replacing the moderation engines.
 - S3 is the durable storage boundary for images and audit records.
 - Chalice keeps the serverless implementation close to AWS assignment
   requirements.
@@ -289,5 +303,5 @@ SafeView is best presented as a managed cloud ML integration project:
   self-hosted platform without replacing the AWS ML services.
 - Flux is the natural next step because the Kubernetes manifests are already
   declarative and stored in Git.
-- Cloudflare is the planned public access layer for a stable course/recruiter
-  URL while preserving the internal Kubernetes service layout.
+- Cloudflare provides the public course/recruiter URL while preserving the
+  internal Kubernetes service layout.

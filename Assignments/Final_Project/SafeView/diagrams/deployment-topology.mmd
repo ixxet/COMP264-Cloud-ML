@@ -18,7 +18,8 @@ flowchart TD
     namespace --> apipod
     namespace --> webpod
     apipod --> apisvc["safeview-api ClusterIP Service"]
+    apipod --> vllm["ai/vllm Service<br/>Mistral-7B-Instruct"]
     webpod --> websvc["safeview-web LoadBalancer Service"]
     websvc --> cilium["Cilium load-balancer path"]
-    cilium --> cloudflare["Cloudflare DNS or Tunnel<br/>planned public URL"]
+    cilium --> cloudflare["Cloudflare Tunnel<br/>view.lintellabs.net"]
     apisvc --> aws["AWS S3 + Rekognition + Comprehend"]

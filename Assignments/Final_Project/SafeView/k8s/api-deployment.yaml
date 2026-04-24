@@ -43,6 +43,14 @@ spec:
               value: "80.0"
             - name: SAFEVIEW_DEBUG
               value: "false"
+            - name: SAFEVIEW_LLM_ENABLED
+              value: "true"
+            - name: SAFEVIEW_LLM_BASE_URL
+              value: http://vllm.ai.svc.cluster.local:8000/v1
+            - name: SAFEVIEW_LLM_MODEL
+              value: mistralai/Mistral-7B-Instruct-v0.3
+            - name: SAFEVIEW_LLM_TIMEOUT_SECONDS
+              value: "8"
           readinessProbe:
             httpGet:
               path: /health

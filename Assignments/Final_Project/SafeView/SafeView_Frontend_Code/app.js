@@ -257,11 +257,69 @@ function renderReport(report, preserveThumb = false) {
   // Summary
   document.getElementById("summary-text").textContent = report.summary;
 
+  // Optional local-platform LLM decision support.
+  renderAiReview(report.ai_review);
+
   // Labels
   renderLabels(report.flagged_labels || [], report.all_labels || [], report.threshold);
 
   // Sentiment
   renderSentiment(report.text_analysis);
+}
+
+/**
+ * renderAiReview
+ * Renders the optional vLLM decision-support section. The AWS verdict and
+ * structured report remain authoritative; this panel explains the result.
+ *
+ * @param {object|null|undefined} review - ai_review block from the API.
+ */
+function renderAiReview(review) {
+  const container = document.getElementById("ai-review-container");
+  const badge = document.getElementById("ai-review-badge");
+
+  if (!review) {
+    badge.textContent = "Optional";
+    container.innerHTML = '<div class="empty-state">AI review is not enabled for this runtime</div>';
+    return;
+  }
+
+  const status = review.status || "generated";
+  const provider = review.provider || "vLLM";
+  const model = review.model || "local model";
+  const risk = String(review.risk_level || "medium").toLowerCase();
+  const riskClass = ["low", "medium", "high"].includes(risk) ? risk : "medium";
+  const evidence = Array.isArray(review.evidence) ? review.evidence : [];
+
+  badge.textContent = status === "generated" ? provider : "Unavailable";
+
+  if (status !== "generated") {
+    container.innerHTML = `
+      <div class="ai-review-block unavailable">
+        <div class="ai-review-main">
+          <span class="risk-pill medium">AI unavailable</span>
+          <span class="ai-model">${escHtml(model)}</span>
+        </div>
+        <p>${escHtml(review.explanation || "AI review was not available.")}</p>
+        <div class="ai-limit">${escHtml(review.limitations || "Use the SafeView report fields.")}</div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="ai-review-block">
+      <div class="ai-review-main">
+        <span class="risk-pill ${riskClass}">${escHtml(riskClass)} risk</span>
+        <span class="ai-model">${escHtml(provider)} · ${escHtml(model)}</span>
+      </div>
+      <div class="ai-decision">${escHtml(review.decision_support || "Review the SafeView report.")}</div>
+      <p>${escHtml(review.explanation || "The AI review summarizes the moderation report.")}</p>
+      ${evidence.length ? `
+        <ul class="ai-evidence">
+          ${evidence.slice(0, 5).map(item => `<li>${escHtml(item)}</li>`).join("")}
+        </ul>` : ""}
+      <div class="ai-limit">${escHtml(review.limitations || "This review does not replace the AWS verdict.")}</div>
+    </div>`;
 }
 
 /**

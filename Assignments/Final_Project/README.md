@@ -2,8 +2,8 @@
 
 SafeView is the COMP 264 final project: a content moderation web application
 that combines a static browser frontend with a Python Chalice backend, Amazon
-S3 storage, Amazon Rekognition image analysis, and Amazon Comprehend sentiment
-analysis.
+S3 storage, Amazon Rekognition image analysis, Amazon Comprehend sentiment
+analysis, and an optional vLLM AI review layer for Kubernetes deployment.
 
 The maintained project source is in [SafeView/](SafeView/).
 
@@ -27,7 +27,7 @@ integration:
 |---|---|
 | AWS-native Chalice | Deploys the backend to API Gateway and Lambda while using S3, Rekognition, and Comprehend. |
 | Docker Compose | Runs the nginx frontend and Chalice API container together for local verification. |
-| Kubernetes / Flux | Runs the frontend and API as Kubernetes Deployments from GHCR images, with Flux able to reconcile the `k8s/` path from Git. |
+| Kubernetes / Flux | Runs the frontend and API as Kubernetes Deployments from GHCR images, enables vLLM review, and can be reconciled from the `k8s/` path in Git. |
 
 The Kubernetes manifests expect runtime credentials to be created separately as
 a `safeview-aws-credentials` Secret. If GHCR images remain private, the cluster

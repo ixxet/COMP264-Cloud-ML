@@ -577,6 +577,99 @@
     border-left: 3px solid var(--accent);
   }
 
+  /* AI review */
+  .ai-review-block {
+    padding: 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius);
+  }
+
+  .ai-review-block.unavailable {
+    border-left-color: var(--warn);
+  }
+
+  .ai-review-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .risk-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .risk-pill.low {
+    background: rgba(46, 204, 113, 0.12);
+    border-color: rgba(46, 204, 113, 0.28);
+    color: var(--safe);
+  }
+
+  .risk-pill.medium {
+    background: rgba(243, 156, 18, 0.12);
+    border-color: rgba(243, 156, 18, 0.28);
+    color: var(--warn);
+  }
+
+  .risk-pill.high {
+    background: rgba(231, 76, 60, 0.12);
+    border-color: rgba(231, 76, 60, 0.28);
+    color: var(--flagged);
+  }
+
+  .ai-model {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .ai-decision {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .ai-review-block p {
+    color: var(--text);
+    font-size: 12px;
+    line-height: 1.65;
+  }
+
+  .ai-evidence {
+    margin: 10px 0 0 16px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .ai-evidence li + li {
+    margin-top: 4px;
+  }
+
+  .ai-limit {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
   /* Labels table */
   .labels-table {
     width: 100%;

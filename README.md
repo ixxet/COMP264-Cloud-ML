@@ -84,7 +84,7 @@ ML_Work/
 |---|------------|------------|----------------------|------------|
 | 1 | [AWS Services Integration](Assignments/1/README.md) | [S3 upload script](Assignments/1/izzet_filesuplolad.py), [Comprehend CLI script](Assignments/1/assignment1_ex2_commands.sh), [Chalice API](Assignments/1/izzet_speaking_pictorial/app.py), [frontend](Assignments/1/izzet_speaking_pictorial/frontend/index.html), [architecture diagram](Assignments/1/diagrams/architecture.mmd) | S3, Comprehend, Comprehend Medical, Rekognition, Translate, Polly, Chalice | Programmatic interaction with managed cloud AI services |
 | 2 | [SageMaker ML Training](Assignments/2/README.md) | [SageMaker notebook](Assignments/2/izzet_income.ipynb), [standalone script](Assignments/2/izzet_income_sagemaker.py), [screenshot checklist](Assignments/2/SCREENSHOT_CHECKLIST.md) | SageMaker, S3, XGBoost, pandas, scikit-learn | End-to-end model training, deployment, evaluation, and cleanup |
-| Final | [SafeView Content Moderation](Assignments/Final_Project/SafeView/README.md) | [frontend](Assignments/Final_Project/SafeView/SafeView_Frontend_Code/index.html), [Chalice backend](Assignments/Final_Project/SafeView/safeview/app.py), [Docker Compose](Assignments/Final_Project/SafeView/compose.yaml), [Kubernetes manifests](Assignments/Final_Project/SafeView/k8s/kustomization.yaml) | S3, Rekognition, Comprehend, Lambda/API Gateway, Docker, Kubernetes, Flux | Full-stack AI service orchestration and deployment packaging |
+| Final | [SafeView Content Moderation](Assignments/Final_Project/SafeView/README.md) | [frontend](Assignments/Final_Project/SafeView/SafeView_Frontend_Code/index.html), [Chalice backend](Assignments/Final_Project/SafeView/safeview/app.py), [Docker Compose](Assignments/Final_Project/SafeView/compose.yaml), [Kubernetes manifests](Assignments/Final_Project/SafeView/k8s/kustomization.yaml) | S3, Rekognition, Comprehend, vLLM, Lambda/API Gateway, Docker, Kubernetes, Flux | Full-stack AI service orchestration and deployment packaging |
 
 ### In-Class Labs
 
@@ -129,6 +129,7 @@ By this point, the course work covers the main building blocks of cloud ML syste
 | Apache Airflow | Local workflow orchestration and DAG execution | Lab 2 |
 | Docker / Docker Compose | Local container packaging and execution | Final Project |
 | Kubernetes / Flux | Self-hosted deployment and GitOps target | Final Project |
+| vLLM | OpenAI-compatible local LLM service for SafeView AI review | Final Project |
 | XGBoost | Gradient boosting model for tabular classification | Assignment 2, Lab 1 |
 | pandas | Data loading, cleaning, and feature preparation | Assignment 2, Lab 1 |
 | scikit-learn | Splitting and evaluation metrics | Assignment 2, Lab 1 |

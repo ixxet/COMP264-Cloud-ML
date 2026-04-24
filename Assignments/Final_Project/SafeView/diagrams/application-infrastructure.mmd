@@ -9,6 +9,8 @@ flowchart LR
     rekognition --> comprehend["Amazon Comprehend<br/>sentiment on detected text"]
     comprehend --> report["Report builder<br/>verdict + JSON output"]
     rekognition --> report
+    report --> vllm["vLLM<br/>grounded AI review"]
+    vllm --> report
     report --> audit["Amazon S3<br/>logs/session/audit.json"]
     report --> browser
 
@@ -24,6 +26,10 @@ flowchart LR
         api
         validator
         report
+    end
+
+    subgraph localai["Local AI platform"]
+        vllm
     end
 
     subgraph deployment["Deployment targets"]

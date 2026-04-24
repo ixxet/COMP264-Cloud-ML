@@ -25,6 +25,7 @@ from chalicelib.validator   import validate_image
 from chalicelib.s3_handler  import upload_image_to_s3, write_audit_log
 from chalicelib.orchestrator import run_moderation_pipeline, refilter_results
 from chalicelib.report      import build_report
+from chalicelib.llm_reviewer import build_ai_review, unavailable_review
 
 # ---------------------------------------------------------------------------
 # Threshold configuration
@@ -36,6 +37,7 @@ from chalicelib.report      import build_report
 MIN_THRESHOLD = 50.0
 MAX_THRESHOLD = 99.0
 _FALLBACK_DEFAULT_THRESHOLD = 80.0
+_FALLBACK_LLM_TIMEOUT_SECONDS = 8.0
 
 
 def _parse_threshold(value) -> tuple[float | None, str | None]:
@@ -76,6 +78,29 @@ def _load_default_threshold() -> float:
     return threshold
 
 
+def _parse_bool_env(name: str, default: bool = False) -> bool:
+    """Parse a feature flag from the environment."""
+    raw_value = os.environ.get(name)
+    if raw_value is None:
+        return default
+    return raw_value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _load_llm_timeout() -> float:
+    """Read the optional LLM timeout without making bad env config fatal."""
+    try:
+        timeout = float(os.environ.get(
+            "SAFEVIEW_LLM_TIMEOUT_SECONDS",
+            str(_FALLBACK_LLM_TIMEOUT_SECONDS),
+        ))
+    except (TypeError, ValueError):
+        return _FALLBACK_LLM_TIMEOUT_SECONDS
+
+    if not math.isfinite(timeout) or timeout <= 0:
+        return _FALLBACK_LLM_TIMEOUT_SECONDS
+    return min(timeout, 30.0)
+
+
 # ---------------------------------------------------------------------------
 # Application setup
 # ---------------------------------------------------------------------------
@@ -88,6 +113,11 @@ app.debug = os.environ.get("SAFEVIEW_DEBUG", "false").lower() == "true"
 BUCKET_NAME = os.environ.get("SAFEVIEW_BUCKET", "safeview-images-dev")
 REGION      = os.environ.get("SAFEVIEW_REGION", "us-east-1")
 DEFAULT_THRESHOLD = _load_default_threshold()
+LLM_ENABLED = _parse_bool_env("SAFEVIEW_LLM_ENABLED", False)
+LLM_BASE_URL = os.environ.get("SAFEVIEW_LLM_BASE_URL", "").strip()
+LLM_MODEL = os.environ.get("SAFEVIEW_LLM_MODEL", "").strip()
+LLM_TIMEOUT_SECONDS = _load_llm_timeout()
+LLM_API_KEY = os.environ.get("SAFEVIEW_LLM_API_KEY", "").strip() or None
 
 # ---------------------------------------------------------------------------
 # Helper — CORS headers for all responses
@@ -112,6 +142,35 @@ def _json_response(body: dict, status_code: int = 200) -> Response:
 def _error_response(message: str, status_code: int = 400) -> Response:
     """Return a structured error payload."""
     return _json_response({"error": True, "message": message}, status_code)
+
+
+def _attach_ai_review(report: dict) -> dict:
+    """
+    Add optional vLLM decision support without changing the core verdict.
+
+    This is intentionally a non-fatal enhancement. Rekognition and Comprehend
+    remain the authoritative moderation services; vLLM only explains their
+    structured output for a human reviewer.
+    """
+    if not LLM_ENABLED:
+        return report
+
+    try:
+        report["ai_review"] = build_ai_review(
+            report=report,
+            base_url=LLM_BASE_URL,
+            model=LLM_MODEL,
+            timeout_seconds=LLM_TIMEOUT_SECONDS,
+            api_key=LLM_API_KEY,
+        )
+    except Exception as exc:
+        app.log.warning("AI review unavailable: %s", str(exc))
+        report["ai_review"] = unavailable_review(
+            model=LLM_MODEL,
+            reason=str(exc),
+        )
+
+    return report
 
 
 def _validate_cached_labels(cached_labels) -> tuple[list | None, str | None]:
@@ -271,6 +330,7 @@ def analyze():
         threshold=threshold,
         moderation_result=moderation_result,
     )
+    report = _attach_ai_review(report)
 
     # ── 6. Write audit log (non-blocking — log error but don't fail) ──
     try:
@@ -365,5 +425,6 @@ def analyze_threshold():
         threshold=threshold,
         moderation_result=filtered_result,
     )
+    report = _attach_ai_review(report)
 
     return _json_response(report, 200)

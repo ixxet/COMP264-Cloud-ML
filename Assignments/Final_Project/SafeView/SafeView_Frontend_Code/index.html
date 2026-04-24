@@ -27,7 +27,7 @@
       <span class="logo-name">SafeView</span>
       <span class="logo-tag">/ Content Moderation</span>
     </div>
-    <span class="header-meta">AWS Rekognition + Comprehend</span>
+    <span class="header-meta">AWS Rekognition + Comprehend + vLLM</span>
   </header>
 
   <!-- ── Main ───────────────────────────────────────────────── -->
@@ -179,6 +179,17 @@
             <div class="summary-text" id="summary-text">—</div>
           </div>
 
+          <!-- AI reviewer -->
+          <div>
+            <div class="section-head">
+              <span class="section-title">AI review</span>
+              <span class="section-badge" id="ai-review-badge">vLLM</span>
+            </div>
+            <div id="ai-review-container">
+              <div class="empty-state">AI review will appear after analysis</div>
+            </div>
+          </div>
+
           <!-- Visual moderation labels -->
           <div>
             <div class="section-head">
@@ -210,7 +221,7 @@
   <!-- Footer -->
   <footer>
     <span>SafeView — COMP 264 Cloud Machine Learning</span>
-    <span>AWS Rekognition · AWS Comprehend · AWS S3 · Chalice</span>
+    <span>AWS Rekognition · AWS Comprehend · vLLM · AWS S3 · Chalice</span>
   </footer>
 
 </div><!-- /shell -->

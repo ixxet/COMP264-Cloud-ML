@@ -9,7 +9,7 @@ rendered locally with `kubectl kustomize`, applied manually with
 | Resource | Purpose |
 |---|---|
 | `namespace.yaml` | Creates the `safeview` namespace. |
-| `api-deployment.yaml` | Runs the Chalice API container with AWS configuration, health probes, resource limits, and Secret-based credentials. |
+| `api-deployment.yaml` | Runs the Chalice API container with AWS/vLLM configuration, health probes, resource limits, and Secret-based credentials. |
 | `api-service.yaml` | Provides an internal ClusterIP service for the API. |
 | `web-deployment.yaml` | Runs the nginx frontend container and configures the internal API upstream. |
 | `web-service.yaml` | Exposes the frontend through a LoadBalancer service. |
@@ -32,12 +32,25 @@ placeholder values only.
 `kustomization.yaml` expects these images:
 
 ```text
-ghcr.io/ixxet/safeview-api:latest
-ghcr.io/ixxet/safeview-web:latest
+ghcr.io/ixxet/safeview-api:ai-review-20260424
+ghcr.io/ixxet/safeview-web:ai-review-20260424
 ```
 
-For a stronger production GitOps flow, replace `latest` with immutable version
-tags or image digests after the demonstration build process is finalized.
+For a stronger production GitOps flow, replace the demonstration tag with
+release tags or image digests after the build process is finalized.
+
+## vLLM Review Configuration
+
+The API Deployment enables the optional local AI review layer with:
+
+```text
+SAFEVIEW_LLM_ENABLED=true
+SAFEVIEW_LLM_BASE_URL=http://vllm.ai.svc.cluster.local:8000/v1
+SAFEVIEW_LLM_MODEL=mistralai/Mistral-7B-Instruct-v0.3
+```
+
+The LLM receives only the structured SafeView report. Rekognition and Comprehend
+remain the authoritative moderation services.
 
 ## Manual Verification
 

@@ -13,7 +13,7 @@ resources:
 images:
   - name: safeview-api
     newName: ghcr.io/ixxet/safeview-api
-    newTag: latest
+    newTag: ai-review-20260424
   - name: safeview-web
     newName: ghcr.io/ixxet/safeview-web
-    newTag: latest
+    newTag: ai-review-20260424

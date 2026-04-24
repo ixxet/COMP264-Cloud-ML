@@ -6,6 +6,7 @@ sequenceDiagram
     participant S3 as Amazon S3
     participant Rekognition as Amazon Rekognition
     participant Comprehend as Amazon Comprehend
+    participant vLLM as Platform vLLM
 
     User->>UI: Select JPEG or PNG image
     UI->>UI: Validate MIME type and 5 MB limit
@@ -22,6 +23,10 @@ sequenceDiagram
     end
     Rekognition-->>API: Labels and text detections
     API->>API: Apply confidence threshold and build report
+    opt AI review enabled
+        API->>vLLM: Explain structured AWS report
+        vLLM-->>API: Grounded ai_review JSON
+    end
     API->>S3: PutObject logs/session/audit.json
     API-->>UI: JSON moderation report
     UI-->>User: Render verdict, labels, sentiment, and download option
@@ -30,4 +35,8 @@ sequenceDiagram
     UI->>API: POST /analyze/threshold with cached labels
     API->>API: Validate cached labels and threshold
     API->>API: Re-filter cached labels without AWS AI calls
+    opt AI review enabled
+        API->>vLLM: Explain re-filtered report
+        vLLM-->>API: Updated ai_review JSON
+    end
     API-->>UI: Updated JSON moderation report
