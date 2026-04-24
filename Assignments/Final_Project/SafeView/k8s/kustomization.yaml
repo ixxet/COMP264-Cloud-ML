@@ -16,4 +16,4 @@ images:
     newTag: ai-review-20260424
   - name: safeview-web
     newName: ghcr.io/ixxet/safeview-web
-    newTag: ai-review-20260424
+    newTag: ai-review-20260424b

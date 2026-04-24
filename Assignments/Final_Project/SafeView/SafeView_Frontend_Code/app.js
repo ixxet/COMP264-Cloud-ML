@@ -112,6 +112,12 @@ async function runAnalysis() {
   if (!selectedFile || !imageDataURL) return;
 
   const threshold = parseInt(thresholdSlider.value, 10);
+  const reviewTimer = setTimeout(() => {
+    setStatus("Finalising report with vLLM AI review...");
+  }, 3500);
+  const longRunTimer = setTimeout(() => {
+    setStatus("Still analysing. AWS image checks and vLLM review can take a few more seconds.");
+  }, 12000);
 
   setBusy(true, "Uploading image to S3…");
   dismissError();
@@ -151,6 +157,9 @@ async function runAnalysis() {
       "Make sure the Chalice backend is running on " + API_BASE
     );
     setBusy(false, "Connection failed.");
+  } finally {
+    clearTimeout(reviewTimer);
+    clearTimeout(longRunTimer);
   }
 }
 
@@ -452,7 +461,14 @@ function downloadReport() {
 // ── UI helpers ──────────────────────────────────────────────
 function getApiBase() {
   const params = new URLSearchParams(window.location.search);
-  const configuredBase = window.SAFEVIEW_API_BASE || params.get("api") || "http://localhost:8000";
+  const queryBase = params.get("api");
+  const host = window.location.hostname;
+  const isLocalHost = ["localhost", "127.0.0.1", "0.0.0.0", ""].includes(host);
+
+  // Public deployments should default to same-origin /api even if an old
+  // cached config.js is blank or a stale local ?api= query string is present.
+  const defaultBase = isLocalHost ? "http://localhost:8000" : "/api";
+  const configuredBase = window.SAFEVIEW_API_BASE || (isLocalHost ? queryBase : null) || defaultBase;
   return configuredBase.replace(/\/+$/, "");
 }
 
